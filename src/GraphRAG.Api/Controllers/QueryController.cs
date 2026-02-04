@@ -8,10 +8,14 @@ namespace GraphRAG.Api.Controllers;
 public class QueryController : ControllerBase
 {
     private readonly ILogger<QueryController> _logger;
+    private readonly GraphRAG.Application.Interfaces.IGraphRagService _graphRagService;
 
-    public QueryController(ILogger<QueryController> logger)
+    public QueryController(
+        ILogger<QueryController> logger,
+        GraphRAG.Application.Interfaces.IGraphRagService graphRagService)
     {
         _logger = logger;
+        _graphRagService = graphRagService;
     }
 
     /// <summary>
@@ -22,24 +26,22 @@ public class QueryController : ControllerBase
     {
         try
         {
-            // TODO: Implement actual GraphRAG service call
-            // For now, return a stub response
-
             _logger.LogInformation("Processing query: {Query}", request.Query);
 
-            var response = new QueryResponse
+            if (request.Context == null
+                || !request.Context.TryGetValue("tenantId", out var tenantValue)
+                || !Guid.TryParse(tenantValue?.ToString(), out var tenantId))
             {
-                Answer = "This is a placeholder response. The GraphRAG service implementation is pending.",
-                ConfidenceScore = 0.0,
-                RelevantNodes = new List<RelevantNode>(),
-                Sources = new List<SourceReference>(),
-                Explanation = request.IncludeExplanation ? new ExplanationResult
+                return BadRequest(new
                 {
-                    Summary = "Explanation feature is not yet implemented.",
-                    ReasoningSteps = new List<ReasoningStep>(),
-                    AttentionWeights = new List<AttentionInfo>()
-                } : null
-            };
+                    error = "Missing or invalid tenantId in request context"
+                });
+            }
+
+            var response = await _graphRagService.ProcessQueryAsync(
+                request,
+                tenantId,
+                HttpContext.RequestAborted);
 
             return Ok(response);
         }

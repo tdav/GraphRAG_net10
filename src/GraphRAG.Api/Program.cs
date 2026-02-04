@@ -26,6 +26,10 @@ builder.Services.AddDbContext<PostgresDbContext>(options =>
     }
 });
 
+// Register application services
+builder.Services.AddScoped<GraphRAG.Application.Interfaces.IHybridSearchService, GraphRAG.Application.Services.HybridSearchService>();
+builder.Services.AddScoped<GraphRAG.Application.Interfaces.IGraphRagService, GraphRAG.Application.Services.GraphRagService>();
+
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IGraphRepository>(provider =>
@@ -98,4 +102,3 @@ app.MapGet("/", () => new
 }).WithName("Root");
 
 app.Run();
-

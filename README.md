@@ -108,9 +108,9 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ## 🎯 Текущий статус
 
-**Общий прогресс проекта**: ~19% (6 из 32 недель)  
-**Текущая фаза**: ✅ Phase I - Infrastructure Setup (ЗАВЕРШЕНА!)  
-**Следующая фаза**: Phase II - Backend Core (готов к началу)  
+**Общий прогресс проекта**: ~20% (6+ из 32 недель)  
+**Текущая фаза**: 🚧 Phase II - Backend Core (в процессе)  
+**Следующая фаза**: Phase III - ML & GNN (после Phase II)  
 **📊 Подробный статус**: См. [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
 
 ### ✅ Phase I - ЗАВЕРШЕНА (100%)
@@ -166,15 +166,15 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ### 📋 Запланировано
 
-#### **Phase II: Backend Core** (Недели 7-14, 0%)
+#### **Phase II: Backend Core** (Недели 7-14, ~5%)
 
 **Цель фазы**: Реализовать основной backend функционал и внешние интеграции
 
 ##### Этап 1: Domain Layer Extensions (Недели 7-8)
 - [ ] Value Objects для типов предметной области
-  - [ ] FhirResourceId - для FHIR ссылок
-  - [ ] ConceptCode - для медицинских кодов (SNOMED CT, LOINC, RxNorm)
-  - [ ] EmbeddingVector - для векторных представлений
+  - [x] FhirResourceId - для FHIR ссылок
+  - [x] ConceptCode - для медицинских кодов (SNOMED CT, LOINC, RxNorm)
+  - [x] EmbeddingVector - для векторных представлений
 - [ ] Domain Events для асинхронной обработки
   - [ ] PatientImported - событие импорта пациента из FHIR
   - [ ] GraphNodeCreated - событие создания узла
@@ -216,10 +216,10 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ##### Этап 4: Application Layer (Недели 11-12)
 - [ ] Core Services
-  - [ ] GraphRagService - главный оркестратор RAG pipeline
+  - [x] GraphRagService - главный оркестратор RAG pipeline (MVP)
     - [ ] ProcessQuery(QueryRequest) - обработка запроса пользователя
     - [ ] Entity extraction → Hybrid search → Context assembly → LLM generation
-  - [ ] HybridSearchService - комбинированный поиск
+  - [x] HybridSearchService - комбинированный поиск (MVP)
     - [ ] VectorSearch - семантический поиск в документах
     - [ ] GraphSearch - поиск связей в графе знаний
     - [ ] ResultsFusion - слияние и ранжирование результатов
@@ -376,7 +376,7 @@ CREATE POLICY tenant_isolation_policy ON documents
 | Фаза | Статус | Прогресс | Описание |
 |------|--------|----------|----------|
 | **Phase I: Infrastructure** | ✅ Завершена | 100% | Базовая инфраструктура готова |
-| **Phase II: Backend Core** | 🔜 Готов к началу | 0% | Детальный план создан |
+| **Phase II: Backend Core** | 🚧 В процессе | ~5% | Начаты value objects и сервисы |
 | **Phase III: ML & GNN** | ⬜ Запланировано | 0% | Ожидает Phase II |
 | **Phase IV: GraphRAG & XAI** | ⬜ Запланировано | 0% | Ожидает Phase III |
 | **Phase V: Production** | ⬜ Запланировано | 0% | Ожидает Phase IV |
@@ -404,8 +404,8 @@ CREATE POLICY tenant_isolation_policy ON documents
 
 ---
 
-**Версия**: 0.3.0-alpha  
+**Версия**: 0.3.1-alpha  
 **Дата обновления**: 04 февраля 2026  
-**Текущая фаза**: ✅ Phase I - Infrastructure Setup (ЗАВЕРШЕНА - 100%)  
-**Следующая фаза**: 🔜 Phase II - Backend Core (готов к началу, детальный план создан)  
+**Текущая фаза**: 🚧 Phase II - Backend Core (в процессе, начаты domain value objects и сервисы)  
+**Следующая фаза**: Phase III - ML & GNN (после Phase II)  
 **Детальный статус**: [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
