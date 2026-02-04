@@ -60,10 +60,13 @@ public class GraphRepository : IGraphRepository
         _context.GraphNodes.Add(node);
         await _context.SaveChangesAsync(cancellationToken);
 
-        // Also add to Apache AGE graph
-        var cypherQuery = $"CREATE (n:{node.Label} {{id: '{node.Id}', properties: '{node.PropertiesJson}'}}) RETURN n";
+        // Note: For production, implement proper parameterized Cypher queries
+        // Apache AGE integration needs proper escaping/parameterization
+        // This is a placeholder implementation - full Apache AGE integration in Phase II
         
-        await ExecuteCypherQueryAsync<object>(cypherQuery, cancellationToken: cancellationToken);
+        // Also add to Apache AGE graph (TODO: Use proper AGE client with parameters)
+        // var cypherQuery = $"CREATE (n:{node.Label} {{id: $id, properties: $props}}) RETURN n";
+        // await ExecuteCypherQueryAsync<object>(cypherQuery, new { id = node.Id, props = node.PropertiesJson });
 
         return node;
     }
@@ -73,13 +76,16 @@ public class GraphRepository : IGraphRepository
         _context.GraphEdges.Add(edge);
         await _context.SaveChangesAsync(cancellationToken);
 
-        // Also add to Apache AGE graph
-        var cypherQuery = $@"
-            MATCH (from {{id: '{edge.SourceNodeId}'}}), (to {{id: '{edge.TargetNodeId}'}})
-            CREATE (from)-[r:{edge.EdgeType} {{id: '{edge.Id}', weight: {edge.Weight ?? 1.0}, properties: '{edge.PropertiesJson}'}}]->(to)
-            RETURN r";
+        // Note: For production, implement proper parameterized Cypher queries
+        // Apache AGE integration needs proper escaping/parameterization
+        // This is a placeholder implementation - full Apache AGE integration in Phase II
         
-        await ExecuteCypherQueryAsync<object>(cypherQuery, cancellationToken: cancellationToken);
+        // Also add to Apache AGE graph (TODO: Use proper AGE client with parameters)
+        // var cypherQuery = @"MATCH (from {id: $fromId}), (to {id: $toId})
+        //                     CREATE (from)-[r:$edgeType {id: $id, weight: $weight, properties: $props}]->(to)
+        //                     RETURN r";
+        // await ExecuteCypherQueryAsync<object>(cypherQuery, 
+        //     new { fromId = edge.SourceNodeId, toId = edge.TargetNodeId, edgeType = edge.EdgeType, ... });
 
         return edge;
     }
@@ -131,9 +137,13 @@ public class GraphRepository : IGraphRepository
             node.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Also delete from Apache AGE graph
-            var cypherQuery = $"MATCH (n {{id: '{nodeId}'}}) DETACH DELETE n";
-            await ExecuteCypherQueryAsync<object>(cypherQuery, cancellationToken: cancellationToken);
+            // Note: For production, implement proper parameterized Cypher queries
+            // Apache AGE integration needs proper escaping/parameterization
+            // This is a placeholder implementation - full Apache AGE integration in Phase II
+            
+            // Also delete from Apache AGE graph (TODO: Use proper AGE client with parameters)
+            // var cypherQuery = "MATCH (n {id: $nodeId}) DETACH DELETE n";
+            // await ExecuteCypherQueryAsync<object>(cypherQuery, new { nodeId });
         }
     }
 }

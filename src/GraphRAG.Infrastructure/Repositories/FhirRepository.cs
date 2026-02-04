@@ -382,8 +382,11 @@ public class FhirRepository : IFhirRepository
                             success++;
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        // Log the error and track which resource failed
+                        // In production, use proper logging framework
+                        System.Diagnostics.Debug.WriteLine($"Failed to import FHIR resource: {ex.Message}");
                         failed++;
                     }
                 }
