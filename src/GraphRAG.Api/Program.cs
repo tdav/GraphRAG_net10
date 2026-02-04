@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using GraphRAG.Infrastructure.Data;
 using GraphRAG.Application.Configuration;
 using GraphRAG.Domain.Interfaces;
+using GraphRAG.Domain.Services;
+using GraphRAG.Infrastructure.Data;
 using GraphRAG.Infrastructure.Repositories;
+using GraphRAG.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,8 @@ builder.Services.AddScoped<IVectorRepository>(provider =>
 });
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IFhirRepository, FhirRepository>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IMedicalTerminologyService, MedicalTerminologyService>();
 
 // Add health checks
 builder.Services.AddHealthChecks()
