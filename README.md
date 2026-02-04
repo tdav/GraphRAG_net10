@@ -158,23 +158,135 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
   - [ ] Integration тесты с Testcontainers
 
 ### 📋 Запланировано
-- [ ] **Phase II: Backend Core** (Недели 7-14, 0%)
-  - [ ] GraphRagService и HybridSearchService
-  - [ ] Semantic Kernel плагины
-  - [ ] FHIR ETL pipeline
+
+#### **Phase II: Backend Core** (Недели 7-14, 0%)
+
+**Цель фазы**: Реализовать основной backend функционал и внешние интеграции
+
+##### Этап 1: Domain Layer Extensions (Недели 7-8)
+- [ ] Value Objects для типов предметной области
+  - [ ] FhirResourceId - для FHIR ссылок
+  - [ ] ConceptCode - для медицинских кодов (SNOMED CT, LOINC, RxNorm)
+  - [ ] EmbeddingVector - для векторных представлений
+- [ ] Domain Events для асинхронной обработки
+  - [ ] PatientImported - событие импорта пациента из FHIR
+  - [ ] GraphNodeCreated - событие создания узла
+  - [ ] QueryCompleted - событие завершения запроса
+- [ ] Domain Services
+  - [ ] ValidationService - валидация бизнес-правил
+  - [ ] MedicalTerminologyService - работа с медицинскими терминами
+
+##### Этап 2: Infrastructure - Database (Недели 8-10)
+- [ ] Repository Implementations
+  - [ ] PostgresRepository<T> - базовый репозиторий с EF Core
+  - [ ] GraphRepository - выполнение Cypher запросов через Apache AGE
+  - [ ] VectorRepository - KNN поиск через pgvector
+  - [ ] ConversationRepository - управление историей диалогов
+  - [ ] FhirRepository - импорт FHIR Bundle
+- [ ] Database Optimizations
+  - [ ] Batch операции для импорта данных
+  - [ ] Транзакционная поддержка с Unit of Work
+  - [ ] Query оптимизация и профилирование
+- [ ] EF Core Migrations
+  - [ ] InitialCreate миграция
+  - [ ] Seed данные для разработки/тестирования
+
+##### Этап 3: Infrastructure - External Services (Недели 10-11)
+- [ ] AI Services
+  - [ ] AzureOpenAIService - embeddings generation и chat completion
+  - [ ] EntityExtractionService - извлечение медицинских сущностей из текста
+  - [ ] SemanticKernelConfiguration - настройка SK плагинов и планировщика
+- [ ] FHIR Services
+  - [ ] FhirMappingService - маппинг FHIR ресурсов в граф
+    - [ ] Patient → GraphNode + Patient entity
+    - [ ] Condition → GraphNode + GraphEdge (hasCondition)
+    - [ ] MedicationRequest → GraphNode + GraphEdge (prescribedMedication)
+    - [ ] Observation → GraphNode + GraphEdge (hasObservation)
+  - [ ] FhirValidationService - валидация FHIR Bundle
+- [ ] Graph Services
+  - [ ] GraphTraversalService - обход графа по паттернам
+  - [ ] SubgraphExtractionService - извлечение релевантных подграфов
+
+##### Этап 4: Application Layer (Недели 11-12)
+- [ ] Core Services
+  - [ ] GraphRagService - главный оркестратор RAG pipeline
+    - [ ] ProcessQuery(QueryRequest) - обработка запроса пользователя
+    - [ ] Entity extraction → Hybrid search → Context assembly → LLM generation
+  - [ ] HybridSearchService - комбинированный поиск
+    - [ ] VectorSearch - семантический поиск в документах
+    - [ ] GraphSearch - поиск связей в графе знаний
+    - [ ] ResultsFusion - слияние и ранжирование результатов
+- [ ] DTOs и Validation
+  - [ ] QueryRequest/QueryResponse
+  - [ ] SearchContext
+  - [ ] GraphContext
+  - [ ] FluentValidation rules
+- [ ] Use Cases
+  - [ ] ProcessMedicalQueryUseCase
+  - [ ] ImportFhirDataUseCase
+  - [ ] ExplainReasoningUseCase
+
+##### Этап 5: Semantic Kernel Plugins (Недели 12-13)
+- [ ] Graph Plugin
+  - [ ] ExecuteCypherQuery - выполнение Cypher запросов
+  - [ ] GetSubgraph - получение подграфа вокруг узла
+  - [ ] FindPaths - поиск путей между узлами
+- [ ] Vector Memory Plugin
+  - [ ] SearchDocuments - семантический поиск документов
+  - [ ] SearchNotes - поиск клинических заметок
+  - [ ] GetSimilarConcepts - поиск похожих концепций
+- [ ] Terminology Plugin
+  - [ ] NormalizeEntityName - нормализация названий
+  - [ ] MapToStandardCode - маппинг на стандартные коды (SNOMED CT)
+  - [ ] ExpandAcronyms - раскрытие медицинских аббревиатур
+- [ ] Planner Configuration
+  - [ ] SequentialPlanner настройка
+  - [ ] Prompt templates для медицинского домена
+
+##### Этап 6: FHIR ETL Pipeline (Недели 13-14)
+- [ ] FHIR Bundle Processing
+  - [ ] JSON parsing и десериализация (Hl7.Fhir.R4)
+  - [ ] Валидация структуры Bundle
+  - [ ] Обработка batch операций
+- [ ] Resource Mapping
+  - [ ] Patient resource → Patient entity + GraphNode
+  - [ ] Condition resource → Condition entity + GraphNode + Edge
+  - [ ] MedicationRequest → MedicationRequest entity + GraphNode + Edge
+  - [ ] Observation → Observation entity + GraphNode + Edge
+  - [ ] Reference resolution (ссылки между ресурсами)
+- [ ] Terminology Processing
+  - [ ] SNOMED CT codes для диагнозов
+  - [ ] LOINC codes для наблюдений
+  - [ ] RxNorm codes для препаратов
+  - [ ] Mapping на Concept entities
+- [ ] Performance Optimization
+  - [ ] Batch insert операции (>1000 records/sec)
+  - [ ] Параллельная обработка Bundle entries
+  - [ ] Deduplication проверки
+
+##### Критерии завершения Phase II:
+- ✅ FHIR Bundle успешно импортируется в граф (>1000 records/sec)
+- ✅ Гибридный поиск работает (vector + graph fusion)
+- ✅ Semantic Kernel planner корректно выбирает плагины
+- ✅ Entity extraction корректно извлекает медицинские сущности (>80% accuracy)
+- ✅ Integration тесты с реальной БД проходят (>80% coverage)
+- ✅ API endpoints документированы в Swagger
+- ✅ Латентность query processing <3s (без GNN)
+
+---
+
+#### **Phase III: ML & GNN** (Недели 15-20, 0%)
+- [ ] GNN модель обучение (PyTorch GAT)
+- [ ] ONNX экспорт и интеграция
   
-- [ ] **Phase III: ML & GNN** (Недели 15-20, 0%)
-  - [ ] GNN модель обучение (PyTorch GAT)
-  - [ ] ONNX экспорт и интеграция
+#### **Phase IV: GraphRAG & XAI** (Недели 21-28, 0%)
+- [ ] Полный RAG pipeline
+- [ ] Explainable AI визуализация
   
-- [ ] **Phase IV: GraphRAG & XAI** (Недели 21-28, 0%)
-  - [ ] Полный RAG pipeline
-  - [ ] Explainable AI визуализация
-  
-- [ ] **Phase V: Production Readiness** (Недели 29-32, 0%)
-  - [ ] Performance оптимизация
-  - [ ] HIPAA compliance
-  - [ ] Production deployment
+#### **Phase V: Production Readiness** (Недели 29-32, 0%)
+- [ ] Performance оптимизация
+- [ ] HIPAA compliance
+- [ ] Production deployment
 
 ## 🔑 Ключевые особенности
 
@@ -251,7 +363,34 @@ CREATE POLICY tenant_isolation_policy ON documents
 
 ---
 
+## 📊 Сводка по фазам проекта
+
+### Статус фаз
+| Фаза | Статус | Прогресс | Описание |
+|------|--------|----------|----------|
+| **Phase I: Infrastructure** | 🟢 В работе | 70% | Базовая инфраструктура готова |
+| **Phase II: Backend Core** | ⬜ Запланировано | 0% | Детальный план создан |
+| **Phase III: ML & GNN** | ⬜ Запланировано | 0% | Ожидает Phase II |
+| **Phase IV: GraphRAG & XAI** | ⬜ Запланировано | 0% | Ожидает Phase III |
+| **Phase V: Production** | ⬜ Запланировано | 0% | Ожидает Phase IV |
+
+### Завершённые компоненты Phase I (✅ 100%)
+- ✅ **Документация** - Полная техническая документация (1800+ строк)
+- ✅ **Domain Layer** - 14 сущностей + 5 интерфейсов репозиториев
+- ✅ **Database Schema** - PostgreSQL 17 + Apache AGE + pgvector + 10 таблиц + 15+ индексов
+- ✅ **Docker Environment** - Готовое окружение для разработки
+- ✅ **CI/CD Pipeline** - GitHub Actions с автоматическими проверками
+- ✅ **.NET Solution** - Структура проектов и сборка
+
+### В работе Phase I (🚧 30% осталось)
+- 🚧 Infrastructure Implementation (репозитории, клиенты БД)
+- 🚧 Application & API Setup (сервисы, DI, health checks)
+- 🚧 Testing Infrastructure (unit + integration тесты)
+
+---
+
 **Версия**: 0.2.0-alpha  
-**Дата**: Февраль 2026  
-**Статус**: 🚧 Phase I - Infrastructure Setup (70% завершено)  
+**Дата обновления**: 04 февраля 2026  
+**Текущая фаза**: 🟢 Phase I - Infrastructure Setup (70% завершено)  
+**Следующая фаза**: Phase II - Backend Core (детальный план готов)  
 **Детальный статус**: [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
