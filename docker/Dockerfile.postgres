@@ -1,0 +1,42 @@
+# PostgreSQL 17 with Apache AGE and pgvector
+# Note: Using PG17 until PG18 is officially released
+FROM postgres:17
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    postgresql-server-dev-17 \
+    libpq-dev \
+    flex \
+    bison \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Apache AGE
+RUN cd /tmp && \
+    git clone --branch release/PG17/1.5.0 --depth 1 https://github.com/apache/age.git && \
+    cd age && \
+    make && make install && \
+    cd / && rm -rf /tmp/age
+
+# Install pgvector
+RUN cd /tmp && \
+    git clone --branch v0.8.0 --depth 1 https://github.com/pgvector/pgvector.git && \
+    cd pgvector && \
+    make && make install && \
+    cd / && rm -rf /tmp/pgvector
+
+# Copy initialization scripts
+COPY ./docker/postgres/init-scripts/ /docker-entrypoint-initdb.d/
+
+# Set environment variables
+ENV POSTGRES_DB=graphrag_db
+ENV POSTGRES_USER=graphrag_user
+ENV POSTGRES_PASSWORD=graphrag_password
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+CMD ["postgres"]

@@ -52,3 +52,29 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Database
+*.sql~
+*.db
+*.sqlite
+*.sqlite3
+pgdata/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Environment
+.env
+.env.local
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
