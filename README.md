@@ -98,6 +98,7 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 ## 📚 Документация
 
 - **[🎯 Статус реализации](IMPLEMENTATION_STATUS.md)** - **НОВОЕ**: Детальный отчет о выполненной работе и план оставшихся задач
+- **[📋 Phase II: Детальный план](docs/PHASE_II_DETAILED_PLAN.md)** - **НОВОЕ**: Полный план Phase 2 (8 недель, 6 этапов)
 - **[План разработки](docs/DEVELOPMENT_PLAN.md)** - Подробный план реализации (фазы I-V, 6-8 месяцев)
 - **[Структура проекта](docs/PROJECT_STRUCTURE.md)** - Описание архитектуры и организации кода
 - **[Дорожная карта](docs/ROADMAP.md)** - Временная шкала и этапы разработки
