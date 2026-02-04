@@ -108,7 +108,7 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ## 🎯 Текущий статус
 
-**Общий прогресс проекта**: ~20% (6+ из 32 недель)  
+**Общий прогресс проекта**: ~23% (7 из 32 недель)  
 **Текущая фаза**: 🚧 Phase II - Backend Core (в процессе)  
 **Следующая фаза**: Phase III - ML & GNN (после Phase II)  
 **📊 Подробный статус**: См. [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
@@ -166,22 +166,22 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ### 📋 Запланировано
 
-#### **Phase II: Backend Core** (Недели 7-14, ~5%)
+#### **Phase II: Backend Core** (Недели 7-14, ~25%)
 
 **Цель фазы**: Реализовать основной backend функционал и внешние интеграции
 
 ##### Этап 1: Domain Layer Extensions (Недели 7-8)
-- [ ] Value Objects для типов предметной области
+- [x] Value Objects для типов предметной области
   - [x] FhirResourceId - для FHIR ссылок
   - [x] ConceptCode - для медицинских кодов (SNOMED CT, LOINC, RxNorm)
   - [x] EmbeddingVector - для векторных представлений
-- [ ] Domain Events для асинхронной обработки
-  - [ ] PatientImported - событие импорта пациента из FHIR
-  - [ ] GraphNodeCreated - событие создания узла
-  - [ ] QueryCompleted - событие завершения запроса
-- [ ] Domain Services
-  - [ ] ValidationService - валидация бизнес-правил
-  - [ ] MedicalTerminologyService - работа с медицинскими терминами
+- [x] Domain Events для асинхронной обработки
+  - [x] PatientImported - событие импорта пациента из FHIR
+  - [x] GraphNodeCreated - событие создания узла
+  - [x] QueryCompleted - событие завершения запроса
+- [x] Domain Services
+  - [x] ValidationService - валидация бизнес-правил
+  - [x] MedicalTerminologyService - работа с медицинскими терминами
 
 ##### Этап 2: Infrastructure - Database (Недели 8-10)
 - [ ] Repository Implementations
