@@ -34,7 +34,7 @@ builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.GraphQueryPlugin>(
 builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.VectorMemoryPlugin>();
 builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.MedicalTerminologyPlugin>();
 
-// Register application services`nbuilder.Services.AddScoped<GraphRAG.Application.UseCases.Interfaces.IProcessMedicalQueryUseCase, GraphRAG.Application.UseCases.ProcessMedicalQueryUseCase>();
+// Register application services`nbuilder.Services.AddScoped<GraphRAG.Application.UseCases.Interfaces.IProcessMedicalQueryUseCase, GraphRAG.Application.UseCases.ProcessMedicalQueryUseCase>();`nbuilder.Services.AddScoped<GraphRAG.Application.UseCases.Interfaces.IImportFhirDataUseCase, GraphRAG.Application.UseCases.ImportFhirDataUseCase>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IAIService, AzureOpenAIService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IHybridSearchService, GraphRAG.Application.Services.HybridSearchService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IGraphRagService, GraphRAG.Application.Services.GraphRagService>();
@@ -118,4 +118,5 @@ app.MapGet("/", () => new
 }).WithName("Root");
 
 app.Run();
+
 

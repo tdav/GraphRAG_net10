@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GraphRAG.Application.Interfaces;
 
 namespace GraphRAG.Api.Controllers;
@@ -7,12 +7,12 @@ namespace GraphRAG.Api.Controllers;
 [Route("api/[controller]")]
 public class FhirController : ControllerBase
 {
-    private readonly IFhirEtlService _fhirEtlService;
+    private readonly GraphRAG.Application.UseCases.Interfaces.IImportFhirDataUseCase _importFhirDataUseCase;
     private readonly ILogger<FhirController> _logger;
 
-    public FhirController(IFhirEtlService fhirEtlService, ILogger<FhirController> logger)
+    public FhirController(GraphRAG.Application.UseCases.Interfaces.IImportFhirDataUseCase importFhirDataUseCase, ILogger<FhirController> logger)
     {
-        _fhirEtlService = fhirEtlService;
+        _importFhirDataUseCase = importFhirDataUseCase;
         _logger = logger;
     }
 
@@ -36,7 +36,7 @@ public class FhirController : ControllerBase
             }
 
             _logger.LogInformation("Importing FHIR bundle for tenant {TenantId}", tenantId);
-            var (success, failed) = await _fhirEtlService.ProcessBundleAsync(jsonString, tenantId);
+            var (success, failed) = await _importFhirDataUseCase.ExecuteAsync(jsonString, tenantId);
 
             return Ok(new
             {
@@ -52,3 +52,4 @@ public class FhirController : ControllerBase
         }
     }
 }
+
