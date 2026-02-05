@@ -1,4 +1,4 @@
-﻿using GraphRAG.Application.DTOs;
+using GraphRAG.Application.DTOs;
 using GraphRAG.Application.Interfaces;
 using GraphRAG.Application.UseCases;
 using GraphRAG.Application.UseCases.Interfaces;
@@ -12,6 +12,7 @@ namespace GraphRAG.Tests.Application;
 public class ProcessMedicalQueryUseCaseTests
 {
     private readonly IGraphRagService _graphRagService;
+    private readonly IExplainReasoningUseCase _explainReasoningUseCase;
     private readonly IValidator<QueryRequest> _validator;
     private readonly ILogger<ProcessMedicalQueryUseCase> _logger;
     private readonly ProcessMedicalQueryUseCase _useCase;
@@ -19,9 +20,10 @@ public class ProcessMedicalQueryUseCaseTests
     public ProcessMedicalQueryUseCaseTests()
     {
         _graphRagService = Substitute.For<IGraphRagService>();
+        _explainReasoningUseCase = Substitute.For<IExplainReasoningUseCase>();
         _validator = Substitute.For<IValidator<QueryRequest>>();
         _logger = Substitute.For<ILogger<ProcessMedicalQueryUseCase>>();
-        _useCase = new ProcessMedicalQueryUseCase(_graphRagService, _validator, _logger);
+        _useCase = new ProcessMedicalQueryUseCase(_graphRagService, _explainReasoningUseCase, _validator, _logger);
     }
 
     [Fact]

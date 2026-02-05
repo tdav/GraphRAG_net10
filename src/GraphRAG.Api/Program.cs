@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using GraphRAG.Application.Configuration;
 using GraphRAG.Domain.Interfaces;
 using GraphRAG.Domain.Services;
 using GraphRAG.Infrastructure.Data;
 using GraphRAG.Infrastructure.Repositories;
 using GraphRAG.Infrastructure.Services;
+using GraphRAG.Infrastructure.AI.Plugins;
 using FluentValidation;
+using GraphRAG.Application.UseCases.Interfaces;
+using GraphRAG.Application.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,14 +33,19 @@ builder.Services.AddDbContext<PostgresDbContext>(options =>
 });
 
 // Register plugins
-builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.GraphQueryPlugin>();
-builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.VectorMemoryPlugin>();
-builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.MedicalTerminologyPlugin>();
+builder.Services.AddScoped<GraphQueryPlugin>();
+builder.Services.AddScoped<VectorMemoryPlugin>();
+builder.Services.AddScoped<MedicalTerminologyPlugin>();
 
-// Register application services`nbuilder.Services.AddScoped<GraphRAG.Application.UseCases.Interfaces.IProcessMedicalQueryUseCase, GraphRAG.Application.UseCases.ProcessMedicalQueryUseCase>();`nbuilder.Services.AddScoped<GraphRAG.Application.UseCases.Interfaces.IImportFhirDataUseCase, GraphRAG.Application.UseCases.ImportFhirDataUseCase>();
+// Register application services
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IAIService, AzureOpenAIService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IHybridSearchService, GraphRAG.Application.Services.HybridSearchService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IGraphRagService, GraphRAG.Application.Services.GraphRagService>();
+
+// Register Use Cases
+builder.Services.AddScoped<IProcessMedicalQueryUseCase, ProcessMedicalQueryUseCase>();
+builder.Services.AddScoped<IImportFhirDataUseCase, ImportFhirDataUseCase>();
+builder.Services.AddScoped<IExplainReasoningUseCase, ExplainReasoningUseCase>();
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -118,5 +126,3 @@ app.MapGet("/", () => new
 }).WithName("Root");
 
 app.Run();
-
-
