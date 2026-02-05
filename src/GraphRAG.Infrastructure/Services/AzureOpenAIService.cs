@@ -1,14 +1,17 @@
 using GraphRAG.Application.Configuration;
 using GraphRAG.Application.Interfaces;
+using GraphRAG.Infrastructure.AI.Plugins;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Planning;
 
 #pragma warning disable SKEXP0010
 #pragma warning disable SKEXP0001
+#pragma warning disable SKEXP0060
 
 namespace GraphRAG.Infrastructure.Services;
 
@@ -20,6 +23,9 @@ public class AzureOpenAIService : IAIService
 
     public AzureOpenAIService(
         IOptions<SemanticKernelSettings> settings,
+        GraphQueryPlugin graphPlugin,
+        VectorMemoryPlugin vectorPlugin,
+        MedicalTerminologyPlugin terminologyPlugin,
         ILogger<AzureOpenAIService> logger)
     {
         _settings = settings.Value;
@@ -38,6 +44,11 @@ public class AzureOpenAIService : IAIService
             _settings.AzureOpenAIApiKey);
 
         _kernel = builder.Build();
+
+        // Register plugins
+        _kernel.ImportPluginFromObject(graphPlugin, "GraphQuery");
+        _kernel.ImportPluginFromObject(vectorPlugin, "VectorMemory");
+        _kernel.ImportPluginFromObject(terminologyPlugin, "MedicalTerminology");
     }
 
     public async Task<float[]> GenerateEmbeddingAsync(string text, CancellationToken cancellationToken = default)
@@ -60,19 +71,37 @@ public class AzureOpenAIService : IAIService
     {
         try
         {
-            var chatService = _kernel.GetRequiredService<IChatCompletionService>();
-            var result = await chatService.GetChatMessageContentAsync(prompt, new OpenAIPromptExecutionSettings
+            // Use Stepwise Planner for complex medical reasoning that requires tool use
+            var planner = new FunctionCallingStepwisePlanner(new FunctionCallingStepwisePlannerOptions
             {
-                MaxTokens = _settings.MaxTokens,
-                Temperature = _settings.Temperature
-            }, kernel: _kernel, cancellationToken: cancellationToken);
+                MaxIterations = 5,
+                MaxTokens = _settings.MaxTokens
+            });
 
-            return result.Content ?? string.Empty;
+            var result = await planner.ExecuteAsync(_kernel, prompt, cancellationToken);
+            return result.FinalAnswer ?? "I could not find a definitive answer.";
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting chat completion");
-            return "Error: AI Service unavailable.";
+            _logger.LogError(ex, "Error getting chat completion via planner");
+            
+            // Fallback to simple completion if planner fails
+            try
+            {
+                var chatService = _kernel.GetRequiredService<IChatCompletionService>();
+                var result = await chatService.GetChatMessageContentAsync(prompt, new OpenAIPromptExecutionSettings
+                {
+                    MaxTokens = _settings.MaxTokens,
+                    Temperature = _settings.Temperature
+                }, kernel: _kernel, cancellationToken: cancellationToken);
+
+                return result.Content ?? string.Empty;
+            }
+            catch (Exception fallbackEx)
+            {
+                _logger.LogError(fallbackEx, "Error in fallback chat completion");
+                return "Error: AI Service unavailable.";
+            }
         }
     }
 

@@ -5,6 +5,7 @@ using GraphRAG.Domain.Services;
 using GraphRAG.Infrastructure.Data;
 using GraphRAG.Infrastructure.Repositories;
 using GraphRAG.Infrastructure.Services;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddDbContext<PostgresDbContext>(options =>
         options.EnableDetailedErrors();
     }
 });
+
+// Register plugins
+builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.GraphQueryPlugin>();
+builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.VectorMemoryPlugin>();
+builder.Services.AddScoped<GraphRAG.Infrastructure.AI.Plugins.MedicalTerminologyPlugin>();
 
 // Register application services
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IAIService, AzureOpenAIService>();
@@ -58,6 +64,9 @@ builder.Services.AddHealthChecks()
 
 // Add controllers
 builder.Services.AddControllers();
+
+// Add Validation
+builder.Services.AddValidatorsFromAssemblyContaining<GraphRAG.Application.Validation.QueryRequestValidator>();
 
 // Add OpenAPI/Swagger
 builder.Services.AddEndpointsApiExplorer();
