@@ -7,11 +7,9 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Planning;
 
 #pragma warning disable SKEXP0010
 #pragma warning disable SKEXP0001
-#pragma warning disable SKEXP0060
 
 namespace GraphRAG.Infrastructure.Services;
 
@@ -62,8 +60,7 @@ public class AzureOpenAIService : IAIService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error generating embedding");
-            // Fallback for demo/development if key is missing
-            return new float[1536]; 
+            return new float[1536];
         }
     }
 
@@ -71,37 +68,23 @@ public class AzureOpenAIService : IAIService
     {
         try
         {
-            // Use Stepwise Planner for complex medical reasoning that requires tool use
-            var planner = new FunctionCallingStepwisePlanner(new FunctionCallingStepwisePlannerOptions
-            {
-                MaxIterations = 5,
-                MaxTokens = _settings.MaxTokens
-            });
+            var chatService = _kernel.GetRequiredService<IChatCompletionService>();
+            var history = new ChatHistory();
+            history.AddUserMessage(prompt);
 
-            var result = await planner.ExecuteAsync(_kernel, prompt, cancellationToken);
-            return result.FinalAnswer ?? "I could not find a definitive answer.";
+            var executionSettings = new OpenAIPromptExecutionSettings
+            {
+                MaxTokens = _settings.MaxTokens,
+                Temperature = _settings.Temperature
+            };
+
+            var response = await chatService.GetChatMessageContentAsync(history, executionSettings, _kernel, cancellationToken);
+            return response.Content ?? string.Empty;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting chat completion via planner");
-            
-            // Fallback to simple completion if planner fails
-            try
-            {
-                var chatService = _kernel.GetRequiredService<IChatCompletionService>();
-                var result = await chatService.GetChatMessageContentAsync(prompt, new OpenAIPromptExecutionSettings
-                {
-                    MaxTokens = _settings.MaxTokens,
-                    Temperature = _settings.Temperature
-                }, kernel: _kernel, cancellationToken: cancellationToken);
-
-                return result.Content ?? string.Empty;
-            }
-            catch (Exception fallbackEx)
-            {
-                _logger.LogError(fallbackEx, "Error in fallback chat completion");
-                return "Error: AI Service unavailable.";
-            }
+            _logger.LogError(ex, "Error getting chat completion");
+            return "Error: AI Service unavailable.";
         }
     }
 

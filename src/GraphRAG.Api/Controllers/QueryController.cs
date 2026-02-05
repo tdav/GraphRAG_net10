@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GraphRAG.Application.DTOs;
 
 namespace GraphRAG.Api.Controllers;
@@ -8,14 +8,14 @@ namespace GraphRAG.Api.Controllers;
 public class QueryController : ControllerBase
 {
     private readonly ILogger<QueryController> _logger;
-    private readonly GraphRAG.Application.Interfaces.IGraphRagService _graphRagService;
+    private readonly GraphRAG.Application.UseCases.Interfaces.IProcessMedicalQueryUseCase _processMedicalQueryUseCase;
 
     public QueryController(
         ILogger<QueryController> logger,
-        GraphRAG.Application.Interfaces.IGraphRagService graphRagService)
+        GraphRAG.Application.UseCases.Interfaces.IProcessMedicalQueryUseCase processMedicalQueryUseCase)
     {
         _logger = logger;
-        _graphRagService = graphRagService;
+        _processMedicalQueryUseCase = processMedicalQueryUseCase;
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class QueryController : ControllerBase
                 });
             }
 
-            var response = await _graphRagService.ProcessQueryAsync(
+            var response = await _processMedicalQueryUseCase.ExecuteAsync(
                 request,
                 tenantId,
                 HttpContext.RequestAborted);
@@ -84,3 +84,4 @@ public class QueryController : ControllerBase
         }
     }
 }
+

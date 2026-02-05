@@ -1,5 +1,6 @@
-using GraphRAG.Domain.Services;
+﻿using GraphRAG.Domain.Services;
 using GraphRAG.Domain.ValueObjects;
+using GraphRAG.Domain.Entities.Graph;
 
 namespace GraphRAG.Infrastructure.Services;
 
@@ -34,5 +35,20 @@ public class MedicalTerminologyService : IMedicalTerminologyService
             : new[] { code.Display };
 
         return Task.FromResult<IReadOnlyList<string>>(synonyms);
+    }
+
+    public Task<string> NormalizeTermAsync(string term, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(term.ToUpperInvariant().Trim());
+    }
+
+    public Task<Concept?> GetConceptByCodeAsync(string code, string system, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<Concept?>(new Concept
+        {
+            Code = code,
+            System = system,
+            Display = $"Display for {code}"
+        });
     }
 }
