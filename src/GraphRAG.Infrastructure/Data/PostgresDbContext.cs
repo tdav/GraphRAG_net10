@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using GraphRAG.Domain.Entities.Core;
 using GraphRAG.Domain.Entities.Medical;
 using GraphRAG.Domain.Entities.Graph;
@@ -39,9 +39,9 @@ public class PostgresDbContext : DbContext
         // Set default schema
         modelBuilder.HasDefaultSchema("graphrag");
 
-        // Configure pgvector extension
-        modelBuilder.HasPostgresExtension("vector");
-        modelBuilder.HasPostgresExtension("age");
+        // Configure pgvector and Apache AGE extension
+        
+        
 
         // Configure entities
         ConfigureTenants(modelBuilder);

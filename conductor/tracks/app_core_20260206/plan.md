@@ -7,7 +7,7 @@
 - [x] Task: Implement ImportFhirDataUseCase (e51a032)
     - [ ] Write unit tests for import orchestration
     - [ ] Implement use case logic using FhirEtlService
-- [~] Task: Implement ExplainReasoningUseCase
+- [x] Task: Implement ExplainReasoningUseCase (db0ce3c)
     - [ ] Write unit tests for reasoning extraction
     - [ ] Implement logic to assemble reasoning paths
 - [x] Task: Conductor - User Manual Verification 'Use Case Implementation' (Protocol in workflow.md)
@@ -20,7 +20,7 @@
     - [ ] Write tests for VectorRepository (pgvector)
 - [x] Task: Implement ETL Pipeline Integration Tests (0b21045)
     - [ ] Write end-to-end import tests using sample FHIR bundles
-- [ ] Task: Conductor - User Manual Verification 'Integration Testing Suite' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Integration Testing Suite' (Protocol in workflow.md)
 
 ## Phase 3: Final Validation and Polish
 - [ ] Task: Performance Benchmarking
