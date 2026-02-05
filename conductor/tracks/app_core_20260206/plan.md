@@ -4,7 +4,7 @@
 - [x] Task: Implement ProcessMedicalQueryUseCase (9e97832)
     - [ ] Write unit tests for query orchestration
     - [ ] Implement use case logic integrating SK Planner
-- [ ] Task: Implement ImportFhirDataUseCase
+- [x] Task: Implement ImportFhirDataUseCase (e51a032)
     - [ ] Write unit tests for import orchestration
     - [ ] Implement use case logic using FhirEtlService
 - [ ] Task: Implement ExplainReasoningUseCase
@@ -28,5 +28,7 @@
 - [ ] Task: Documentation Update
     - [ ] Update API documentation for new Use Cases
 - [ ] Task: Conductor - User Manual Verification 'Final Validation and Polish' (Protocol in workflow.md)
+
+
 
 
