@@ -16,11 +16,12 @@ public class GraphRagServiceTests
     public async Task ProcessQueryAsync_ReturnsResponseWithContext()
     {
         var hybridSearchService = new StubHybridSearchService();
-        var service = new GraphRagService(hybridSearchService, NullLogger<GraphRagService>.Instance);
+        var aiService = new StubAIService();
+        var service = new GraphRagService(hybridSearchService, aiService, NullLogger<GraphRagService>.Instance);
 
         var response = await service.ProcessQueryAsync(new QueryRequest { Query = "Test query" }, Guid.NewGuid());
 
-        Assert.Contains("Retrieved 2", response.Answer);
+        Assert.Contains("Retrieved 2", response.Explanation?.Summary ?? "");
         Assert.Equal(2, response.Sources.Count);
     }
 
@@ -65,6 +66,18 @@ public class GraphRagServiceTests
     }
 }
 
+internal sealed class StubAIService : IAIService
+{
+    public Task<float[]> GenerateEmbeddingAsync(string text, CancellationToken cancellationToken = default)
+        => Task.FromResult(new float[1536]);
+
+    public Task<string> GetChatCompletionAsync(string prompt, CancellationToken cancellationToken = default)
+        => Task.FromResult("AI Response");
+
+    public Task<List<string>> ExtractEntitiesAsync(string text, CancellationToken cancellationToken = default)
+        => Task.FromResult(new List<string> { "Entity1" });
+}
+
 public class HybridSearchServiceTests
 {
     [Fact]
@@ -72,6 +85,7 @@ public class HybridSearchServiceTests
     {
         var vectorRepository = new StubVectorRepository();
         var graphRepository = new StubGraphRepository();
+        var aiService = new StubAIService();
         var options = Options.Create(new GraphRAG.Application.Configuration.GraphRagSettings
         {
             MaxGraphHops = 1
@@ -79,6 +93,7 @@ public class HybridSearchServiceTests
         var service = new HybridSearchService(
             vectorRepository,
             graphRepository,
+            aiService,
             options,
             NullLogger<HybridSearchService>.Instance);
 

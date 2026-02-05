@@ -108,8 +108,8 @@ dotnet ef database update --project src/GraphRAG.Infrastructure --startup-projec
 
 ## 🎯 Текущий статус
 
-**Общий прогресс проекта**: ~23% (7 из 32 недель)  
-**Текущая фаза**: 🚧 Phase II - Backend Core (в процессе)  
+**Общий прогресс проекта**: ~35% (11 из 32 недель)  
+**Текущая фаза**: 🚧 Phase II - Backend Core (в процессе, реализовано 45%)  
 **Следующая фаза**: Phase III - ML & GNN (после Phase II)  
 **📊 Подробный статус**: См. [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
 
@@ -376,7 +376,7 @@ CREATE POLICY tenant_isolation_policy ON documents
 | Фаза | Статус | Прогресс | Описание |
 |------|--------|----------|----------|
 | **Phase I: Infrastructure** | ✅ Завершена | 100% | Базовая инфраструктура готова |
-| **Phase II: Backend Core** | 🚧 В процессе | ~5% | Начаты value objects и сервисы |
+| **Phase II: Backend Core** | 🚧 В процессе | 45% | Реализованы AI, FHIR ETL и основные сервисы |
 | **Phase III: ML & GNN** | ⬜ Запланировано | 0% | Ожидает Phase II |
 | **Phase IV: GraphRAG & XAI** | ⬜ Запланировано | 0% | Ожидает Phase III |
 | **Phase V: Production** | ⬜ Запланировано | 0% | Ожидает Phase IV |

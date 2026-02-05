@@ -14,17 +14,20 @@ public class HybridSearchService : IHybridSearchService
 {
     private readonly IVectorRepository _vectorRepository;
     private readonly IGraphRepository _graphRepository;
+    private readonly IAIService _aiService;
     private readonly ILogger<HybridSearchService> _logger;
     private readonly GraphRagSettings _settings;
 
     public HybridSearchService(
         IVectorRepository vectorRepository,
         IGraphRepository graphRepository,
+        IAIService aiService,
         IOptions<GraphRagSettings> settings,
         ILogger<HybridSearchService> logger)
     {
         _vectorRepository = vectorRepository;
         _graphRepository = graphRepository;
+        _aiService = aiService;
         _logger = logger;
         _settings = settings.Value;
     }
@@ -41,7 +44,7 @@ public class HybridSearchService : IHybridSearchService
             throw new ArgumentOutOfRangeException(nameof(maxResults), "maxResults cannot be negative.");
         }
 
-        var vector = await GeneratePlaceholderVectorAsync(query, cancellationToken);
+        var vector = await _aiService.GenerateEmbeddingAsync(query, cancellationToken);
         var vectorResults = maxResults == 0
             ? new List<VectorSearchResult>()
             : await VectorSearchAsync(vector, tenantId, maxResults, null, cancellationToken);
@@ -140,10 +143,5 @@ public class HybridSearchService : IHybridSearchService
         }
 
         return combined.OrderByDescending(item => item.RelevanceScore).ToList();
-    }
-
-    private static Task<float[]> GeneratePlaceholderVectorAsync(string query, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(new[] { (float)query.Length / 100f, 0.2f, 0.3f, 0.4f });
     }
 }

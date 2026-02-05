@@ -1,4 +1,5 @@
 using GraphRAG.Domain.Entities.Core;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GraphRAG.Domain.Entities.Graph;
 
@@ -26,6 +27,12 @@ public class GraphEdge : BaseEntity
     /// Edge properties (JSON)
     /// </summary>
     public string PropertiesJson { get; set; } = "{}";
+
+    /// <summary>
+    /// Edge properties (NotMapped)
+    /// </summary>
+    [NotMapped]
+    public Dictionary<string, object> Properties { get; set; } = new();
 
     /// <summary>
     /// AGE graph name

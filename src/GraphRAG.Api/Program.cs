@@ -29,6 +29,7 @@ builder.Services.AddDbContext<PostgresDbContext>(options =>
 });
 
 // Register application services
+builder.Services.AddScoped<GraphRAG.Application.Interfaces.IAIService, AzureOpenAIService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IHybridSearchService, GraphRAG.Application.Services.HybridSearchService>();
 builder.Services.AddScoped<GraphRAG.Application.Interfaces.IGraphRagService, GraphRAG.Application.Services.GraphRagService>();
 
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IFhirRepository, FhirRepository>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<IMedicalTerminologyService, MedicalTerminologyService>();
+builder.Services.AddScoped<GraphRAG.Application.Interfaces.IFhirMappingService, FhirMappingService>();
+builder.Services.AddScoped<GraphRAG.Application.Interfaces.IFhirEtlService, FhirEtlService>();
 
 // Add health checks
 builder.Services.AddHealthChecks()
